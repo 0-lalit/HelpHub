@@ -1,0 +1,134 @@
+[
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_appointments.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_appointments.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_profile.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_ga_ta_details.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_ga_ta_details.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.example.helphub.app-debug-4:/layout_item_appointment.xml.flat",
+        "source": "com.example.helphub.app-main-6:/layout/item_appointment.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_item_message_mine.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\item_message_mine.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\drawable_availability_background.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\drawable\\availability_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\xml\\backup_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_booking.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_booking.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-xhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_item_ga_ta.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\item_ga_ta.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\menu_top_app_bar.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\menu\\top_app_bar.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_login.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_item_appointment.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\item_appointment.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_messages.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_messages.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_schedule.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_schedule.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\xml\\data_extraction_rules.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_item_message_other.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\item_message_other.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\menu_bottom_navigation_menu.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\menu\\bottom_navigation_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\drawable_availability_indicator.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\drawable\\availability_indicator.xml"
+    },
+    {
+        "merged": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-debug-4:\\layout_activity_main.xml.flat",
+        "source": "C:\\Users\\s572835\\.gradle\\daemon\\8.10.2\\com.example.helphub.app-main-6:\\layout\\activity_main.xml"
+    }
+]
