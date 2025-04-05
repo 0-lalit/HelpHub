@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369617168946",
+    "project_id": "helphubauthentication",
+    "storage_bucket": "helphubauthentication.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369617168946:android:68c0be50a7be94c4af2a2b",
+        "android_client_info": {
+          "package_name": "com.example.helphub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcGBZ8w0SlkV3Ako_CLbZl24fbWtaUbQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
