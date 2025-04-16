@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     private GaTaAdapter adapter;
     private List<GaTaItem> allGaTaItems;
     private List<GaTaItem> filteredGaTaItems;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,20 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        
         // Initialize views and data
         initializeViews();
         setupListeners();
         initializeSampleData();
         setupRecyclerView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        return true;
     }
 
     private void initializeViews() {
@@ -51,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         
         // Set up the toolbar
         setSupportActionBar(topAppBar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+        }
     }
 
     private void initializeSampleData() {
@@ -161,8 +177,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     }
 
     private void performLogout() {
-        // TODO: Implement actual logout logic (clear session, etc.)
+        // Sign out from Firebase
+        mAuth.signOut();
+        
+        // Show logout message
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+        
+        // Clear the activity stack and go to login screen
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
-        startActivity(new Intent(this, LoginActivity.class));
     }
 }
