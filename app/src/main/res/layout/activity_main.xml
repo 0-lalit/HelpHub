@@ -6,18 +6,25 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="30dp"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
             app:title="HelpHub"
             app:menu="@menu/top_app_bar"
+            app:titleTextColor="@android:color/white"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+            app:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"/>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -56,6 +63,9 @@
             android:id="@+id/bottomNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:itemIconTint="@android:color/white"
+            app:itemTextColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:menu="@menu/bottom_navigation_menu"/>
 
