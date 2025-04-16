@@ -12,6 +12,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
@@ -24,11 +25,15 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView privacyPolicyText;
     private TextView termsOfServiceText;
     private MaterialButton logoutButton;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
         initializeViews();
         setupToolbar();
@@ -96,9 +101,17 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         logoutButton.setOnClickListener(v -> {
-            // TODO: Implement proper logout
-            startActivity(new Intent(this, LoginActivity.class));
-            finishAffinity();
+            // Sign out from Firebase
+            mAuth.signOut();
+            
+            // Show logout message
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+            
+            // Clear the activity stack and go to login screen
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
     }
 

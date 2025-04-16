@@ -6,9 +6,4 @@
         android:icon="@android:drawable/ic_menu_myplaces"
         android:title="Profile"
         app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/logout"
-        android:icon="@android:drawable/ic_lock_power_off"
-        android:title="Logout"
-        app:showAsAction="always"/>
 </menu> 

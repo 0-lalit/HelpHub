@@ -55,6 +55,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.profile) {
+            showProfile();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void initializeViews() {
         gaTaList = findViewById(R.id.gaTaList);
         searchInput = findViewById(R.id.searchInput);
@@ -83,19 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     private void setupListeners() {
         // Set up bottom navigation
         bottomNavigation.setOnItemSelectedListener(this);
-
-        // Set up top app bar menu clicks
-        topAppBar.setOnMenuItemClickListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.profile) {
-                showProfile();
-                return true;
-            } else if (itemId == R.id.logout) {
-                performLogout();
-                return true;
-            }
-            return false;
-        });
 
         // Set up search functionality with real-time filtering
         searchInput.addTextChangedListener(new TextWatcher() {
@@ -174,19 +171,5 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     private void showProfile() {
         startActivity(new Intent(this, ProfileActivity.class));
-    }
-
-    private void performLogout() {
-        // Sign out from Firebase
-        mAuth.signOut();
-        
-        // Show logout message
-        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-        
-        // Clear the activity stack and go to login screen
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 }
