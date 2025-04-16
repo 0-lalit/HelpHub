@@ -2,6 +2,7 @@ package com.example.helphub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,9 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ProfileActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
@@ -26,14 +30,16 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView termsOfServiceText;
     private MaterialButton logoutButton;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Initialize Firebase Auth
+        // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         initializeViews();
         setupToolbar();
@@ -61,9 +67,28 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupProfile() {
-        // TODO: Load actual user data
-        nameText.setText("John Doe");
-        emailText.setText("john.doe@example.com");
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Set email from Firebase Auth
+            emailText.setText(currentUser.getEmail());
+            
+            // Load user profile from Firestore
+            db.collection("users").document(currentUser.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String firstName = documentSnapshot.getString("firstName");
+                        String lastName = documentSnapshot.getString("lastName");
+                        nameText.setText(firstName + " " + lastName);
+                    } else {
+                        nameText.setText("User");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ProfileActivity", "Error loading user profile", e);
+                    nameText.setText("User");
+                });
+        }
         
         // TODO: Load actual settings
         notificationSwitch.setChecked(true);
