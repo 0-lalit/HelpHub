@@ -2,6 +2,7 @@ package com.example.helphub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -9,21 +10,42 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
     private MaterialButton loginButton;
     private TextView forgotPasswordText;
     private TextView signUpText;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
         initializeViews();
         setupListeners();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            Log.d(TAG, "User already signed in: " + currentUser.getEmail());
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 
     private void initializeViews() {
@@ -36,15 +58,28 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupListeners() {
         loginButton.setOnClickListener(v -> performLogin());
-        
+
         forgotPasswordText.setOnClickListener(v -> {
-            // TODO: Implement forgot password functionality
-            Toast.makeText(this, "Forgot password clicked", Toast.LENGTH_SHORT).show();
+            String email = emailInput.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Please enter your email first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            mAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "Password reset failed", task.getException());
+                            Toast.makeText(this, "Failed to send reset email: " + task.getException().getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
         });
-        
+
         signUpText.setOnClickListener(v -> {
-            // TODO: Implement sign up functionality
-            Toast.makeText(this, "Sign up clicked", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, SignUpActivity.class));
         });
     }
 
@@ -57,9 +92,44 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Implement actual authentication
-        // For now, just proceed to main activity
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+        // Show loading state
+        loginButton.setEnabled(false);
+        loginButton.setText("Logging in...");
+
+        Log.d(TAG, "Attempting to sign in with email: " + email);
+
+        // Sign in with Firebase
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        Log.d(TAG, "Sign in successful for user: " + user.getEmail());
+                        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                        
+                        // Start MainActivity and clear the back stack
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // Sign in failed
+                        Exception exception = task.getException();
+                        Log.e(TAG, "Sign in failed", exception);
+                        
+                        String errorMessage;
+                        if (exception instanceof FirebaseAuthInvalidUserException) {
+                            errorMessage = "No account found with this email";
+                        } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+                            errorMessage = "Invalid password";
+                        } else {
+                            errorMessage = "Authentication failed: " + exception.getMessage();
+                        }
+                        
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+                        loginButton.setEnabled(true);
+                        loginButton.setText("Login");
+                    }
+                });
     }
 } 
