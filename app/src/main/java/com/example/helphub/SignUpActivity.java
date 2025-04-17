@@ -13,6 +13,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
@@ -23,6 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
     private MaterialButton gaTaSignUpButton;
     private TextView loginText;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private boolean isGaTaSignUp = false;
 
     @Override
@@ -30,8 +37,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // Initialize Firebase Auth
+        // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         initializeViews();
         setupListeners();
@@ -101,29 +109,62 @@ public class SignUpActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign up success
                         Log.d(TAG, "createUserWithEmail:success");
-                        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
                         
-                        // Send email verification
-                        mAuth.getCurrentUser().sendEmailVerification()
-                                .addOnCompleteListener(emailTask -> {
-                                    if (emailTask.isSuccessful()) {
-                                        Toast.makeText(this, "Verification email sent", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                        
-                        // Navigate based on user type
-                        if (isGaTaSignUp) {
-                            Log.d(TAG, "Navigating to GaTaActivity for admin user");
-                            Intent intent = new Intent(this, GaTaActivity.class);
+                        // Create user document in Firestore
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            Log.d(TAG, "User created successfully with UID: " + user.getUid());
+                            
+                            // First navigate to the appropriate activity
+                            Log.d(TAG, "Navigating to " + (isGaTaSignUp ? "GaTaActivity" : "MainActivity"));
+                            Intent intent;
+                            if (isGaTaSignUp) {
+                                intent = new Intent(this, GaTaActivity.class);
+                            } else {
+                                intent = new Intent(this, MainActivity.class);
+                            }
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
+                            
+                            // Then update Firestore in the background
+                            Map<String, Object> userData = new HashMap<>();
+                            userData.put("email", email);
+                            userData.put("isAdmin", isGaTaSignUp);
+                            userData.put("createdAt", new Date());
+                            
+                            Log.d(TAG, "Attempting to create Firestore document for user: " + user.getUid());
+                            db.collection("users").document(user.getUid())
+                                .set(userData)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d(TAG, "Firestore document created successfully");
+                                    Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+                                    
+                                    // Send email verification
+                                    Log.d(TAG, "Sending email verification");
+                                    user.sendEmailVerification()
+                                        .addOnCompleteListener(emailTask -> {
+                                            if (emailTask.isSuccessful()) {
+                                                Log.d(TAG, "Verification email sent successfully");
+                                                Toast.makeText(this, "Verification email sent", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Log.e(TAG, "Failed to send verification email", emailTask.getException());
+                                            }
+                                        });
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Error creating user document", e);
+                                    // Don't show error to user since we've already navigated away
+                                });
+                            
+                            // Finish this activity after navigation
                             finish();
                         } else {
-                            Log.d(TAG, "Navigating to MainActivity for regular user");
-                            Intent intent = new Intent(this, MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
+                            Log.e(TAG, "User is null after successful creation");
+                            Toast.makeText(this, "Error creating user account", Toast.LENGTH_LONG).show();
+                            signUpButton.setEnabled(true);
+                            gaTaSignUpButton.setEnabled(true);
+                            signUpButton.setText("Sign Up");
+                            gaTaSignUpButton.setText("Sign Up as Admin");
                         }
                     } else {
                         // Sign up failed
