@@ -45,6 +45,9 @@
         <activity
             android:name=".GaTaDetailsActivity"
             android:exported="false" />
+        <activity
+            android:name=".GaTaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

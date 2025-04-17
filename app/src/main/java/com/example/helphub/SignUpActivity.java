@@ -20,8 +20,10 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputEditText passwordInput;
     private TextInputEditText confirmPasswordInput;
     private MaterialButton signUpButton;
+    private MaterialButton gaTaSignUpButton;
     private TextView loginText;
     private FirebaseAuth mAuth;
+    private boolean isGaTaSignUp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +42,22 @@ public class SignUpActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
         signUpButton = findViewById(R.id.signUpButton);
+        gaTaSignUpButton = findViewById(R.id.gaTaSignUpButton);
         loginText = findViewById(R.id.loginText);
     }
 
     private void setupListeners() {
-        signUpButton.setOnClickListener(v -> performSignUp());
+        signUpButton.setOnClickListener(v -> {
+            Log.d(TAG, "Regular signup button clicked");
+            isGaTaSignUp = false;
+            performSignUp();
+        });
+        
+        gaTaSignUpButton.setOnClickListener(v -> {
+            Log.d(TAG, "GA/TA signup button clicked");
+            isGaTaSignUp = true;
+            performSignUp();
+        });
         
         loginText.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
@@ -53,6 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void performSignUp() {
+        Log.d(TAG, "Starting signup process. isGaTaSignUp: " + isGaTaSignUp);
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
@@ -75,7 +89,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         // Show loading state
         signUpButton.setEnabled(false);
+        gaTaSignUpButton.setEnabled(false);
         signUpButton.setText("Creating account...");
+        gaTaSignUpButton.setText("Creating account...");
 
         Log.d(TAG, "Attempting to create account with email: " + email);
 
@@ -95,9 +111,20 @@ public class SignUpActivity extends AppCompatActivity {
                                     }
                                 });
                         
-                        // Navigate to login
-                        startActivity(new Intent(this, LoginActivity.class));
-                        finish();
+                        // Navigate based on user type
+                        if (isGaTaSignUp) {
+                            Log.d(TAG, "Navigating to GaTaActivity for admin user");
+                            Intent intent = new Intent(this, GaTaActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Log.d(TAG, "Navigating to MainActivity for regular user");
+                            Intent intent = new Intent(this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
                     } else {
                         // Sign up failed
                         Exception exception = task.getException();
@@ -114,7 +141,9 @@ public class SignUpActivity extends AppCompatActivity {
                         
                         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
                         signUpButton.setEnabled(true);
+                        gaTaSignUpButton.setEnabled(true);
                         signUpButton.setText("Sign Up");
+                        gaTaSignUpButton.setText("Sign Up as Admin");
                     }
                 });
     }
