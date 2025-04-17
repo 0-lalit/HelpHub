@@ -34,6 +34,9 @@
             android:name=".AppointmentsActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminAppointmentsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MessagesActivity"
             android:exported="false" />
         <activity

@@ -51,7 +51,8 @@ public class GaTaActivity extends AppCompatActivity {
     private void setupListeners() {
         viewAppointmentsButton.setOnClickListener(v -> {
             Log.d(TAG, "View Appointments button clicked");
-            Toast.makeText(this, "View Appointments clicked", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AppointmentsActivity.class);
+            startActivity(intent);
         });
 
         manageScheduleButton.setOnClickListener(v -> {
