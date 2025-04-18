@@ -34,6 +34,9 @@
             android:name=".AppointmentsActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminAppointmentsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MessagesActivity"
             android:exported="false" />
         <activity
@@ -44,6 +47,9 @@
             android:exported="false" />
         <activity
             android:name=".GaTaDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GaTaActivity"
             android:exported="false" />
     </application>
 
