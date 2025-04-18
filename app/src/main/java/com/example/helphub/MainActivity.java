@@ -19,6 +19,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     private List<GaTaItem> allGaTaItems;
     private List<GaTaItem> filteredGaTaItems;
     private FirebaseAuth mAuth;
+    private DatabaseReference gaTaRef;
+    private ValueEventListener gaTaListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         // Initialize views and data
         initializeViews();
         setupListeners();
-        initializeSampleData();
+        initializeFirebaseData();
         setupRecyclerView();
     }
 
@@ -65,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         return super.onOptionsItemSelected(item);
     }
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference("message");
+
+
     private void initializeViews() {
         gaTaList = findViewById(R.id.gaTaList);
         searchInput = findViewById(R.id.searchInput);
@@ -79,15 +91,94 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
     }
 
-    private void initializeSampleData() {
+    private void initializeFirebaseData() {
         allGaTaItems = new ArrayList<>();
-        allGaTaItems.add(new GaTaItem("Lalit Kumar", "CS 101 - Introduction to Programming", true, null));
-        allGaTaItems.add(new GaTaItem("Orchard Johnson", "CS 202 - Data Structures", false, null));
-        allGaTaItems.add(new GaTaItem("Hawaii Smith", "CS 303 - Algorithms", true, null));
-        allGaTaItems.add(new GaTaItem("Alex Thompson", "CS 401 - Software Engineering", true, null));
-        allGaTaItems.add(new GaTaItem("Maria Garcia", "CS 205 - Database Systems", false, null));
+        filteredGaTaItems = new ArrayList<>();
         
-        filteredGaTaItems = new ArrayList<>(allGaTaItems);
+        // Initialize Firebase Database reference for GA/TA data
+        gaTaRef = FirebaseDatabase.getInstance().getReference("gaTas");
+        
+        // Add real-time listener for GA/TA data
+        gaTaListener = gaTaRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                allGaTaItems.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    try {
+                        GaTaItem gaTa = snapshot.getValue(GaTaItem.class);
+                        if (gaTa != null) {
+                            gaTa.setId(snapshot.getKey()); // Store the Firebase key
+                            allGaTaItems.add(gaTa);
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, 
+                            "Error loading GA/TA data: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                }
+                filteredGaTaItems = new ArrayList<>(allGaTaItems);
+                if (adapter != null) {
+                    adapter.updateItems(filteredGaTaItems);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, 
+                    "Failed to load GA/TA data: " + error.getMessage(), 
+                    Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean isAdmin() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            return false;
+        }
+        
+        // Check if user is admin (you should implement proper admin checking logic)
+        // This is a simplified example
+        return currentUser.getEmail() != null && 
+               currentUser.getEmail().endsWith("@admin.com");
+    }
+
+    public void addNewGaTa(String name, String course, boolean available) {
+        if (!isAdmin()) {
+            Toast.makeText(this, 
+                "Only admins can add new GA/TA entries", 
+                Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (name == null || name.trim().isEmpty() || 
+            course == null || course.trim().isEmpty()) {
+            Toast.makeText(this, 
+                "Name and course cannot be empty", 
+                Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        GaTaItem newGaTa = new GaTaItem(name.trim(), course.trim(), available, null);
+        DatabaseReference newGaTaRef = gaTaRef.push();
+        newGaTaRef.setValue(newGaTa)
+            .addOnSuccessListener(aVoid -> 
+                Toast.makeText(MainActivity.this, 
+                    "Successfully added new GA/TA", 
+                    Toast.LENGTH_SHORT).show())
+            .addOnFailureListener(e -> 
+                Toast.makeText(MainActivity.this, 
+                    "Failed to add GA/TA: " + e.getMessage(), 
+                    Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the listener when activity is destroyed
+        if (gaTaRef != null && gaTaListener != null) {
+            gaTaRef.removeEventListener(gaTaListener);
+        }
     }
 
     private void setupListeners() {
