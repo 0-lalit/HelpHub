@@ -3,6 +3,7 @@ package com.example.helphub;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -145,33 +146,36 @@ public class ProfileActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_edit_profile);
         dialog.getWindow().setLayout(
-            (int) (getResources().getDisplayMetrics().widthPixels * 0.9),
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                (int) (getResources().getDisplayMetrics().widthPixels * 0.9),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
         );
+
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
 
         TextInputEditText firstNameInput = dialog.findViewById(R.id.firstNameInput);
         TextInputEditText lastNameInput = dialog.findViewById(R.id.lastNameInput);
-        TextInputEditText emailInput = dialog.findViewById(R.id.emailInput);
         MaterialButton cancelButton = dialog.findViewById(R.id.cancelButton);
         MaterialButton saveButton = dialog.findViewById(R.id.saveButton);
 
-        // Pre-fill current values
-        String[] nameParts = nameText.getText().toString().split(" ");
+        // Pre-fill values
+        String[] nameParts = nameText.getText().toString().trim().split(" ");
         if (nameParts.length >= 2) {
             firstNameInput.setText(nameParts[0]);
             lastNameInput.setText(nameParts[1]);
+        } else if (nameParts.length == 1) {
+            firstNameInput.setText(nameParts[0]);
+            lastNameInput.setText("");
         }
-        emailInput.setText(emailText.getText());
 
         cancelButton.setOnClickListener(v -> dialog.dismiss());
 
         saveButton.setOnClickListener(v -> {
             String firstName = firstNameInput.getText().toString().trim();
             String lastName = lastNameInput.getText().toString().trim();
-            String email = emailInput.getText().toString().trim();
 
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            if (firstName.isEmpty() || lastName.isEmpty()) {
+                Toast.makeText(this, "Both fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -181,54 +185,77 @@ public class ProfileActivity extends AppCompatActivity {
                 return;
             }
 
-            // Show loading state
             saveButton.setEnabled(false);
             saveButton.setText("Saving...");
 
-            // First update Firestore
             db.collection("users").document(currentUser.getUid())
-                .update(
-                    "firstName", firstName,
-                    "lastName", lastName
-                )
-                .addOnSuccessListener(aVoid -> {
-                    // Update name in UI
-                    nameText.setText(firstName + " " + lastName);
-
-                    // Check if email needs to be updated
-                    if (!email.equals(currentUser.getEmail())) {
-                        // Update email in Firebase Auth
-                        currentUser.updateEmail(email)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    // Update email in UI
-                                    emailText.setText(email);
-                                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                } else {
-                                    // Revert name changes if email update fails
-                                    nameText.setText(currentUser.getDisplayName());
-                                    Log.e("ProfileActivity", "Error updating email", task.getException());
-                                    Toast.makeText(this, "Failed to update email: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                    saveButton.setEnabled(true);
-                                    saveButton.setText("Save");
-                                }
-                            });
-                    } else {
-                        // No email change needed
-                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    .update("firstName", firstName, "lastName", lastName)
+                    .addOnSuccessListener(aVoid -> {
+                        // Update UI
+                        nameText.setText(firstName + " " + lastName);
+                        Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("ProfileActivity", "Error updating profile", e);
-                    Toast.makeText(this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    saveButton.setEnabled(true);
-                    saveButton.setText("Save");
-                });
+                    })
+                    .addOnFailureListener(e -> {
+                        saveButton.setEnabled(true);
+                        saveButton.setText("Save");
+                        Log.e("ProfileActivity", "Firestore update failed", e);
+                        Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
         });
 
         dialog.show();
+    }
+
+
+
+    private void refreshProfile() {
+        // Clear the password field for next time
+        TextInputEditText passwordInput = findViewById(R.id.passwordInput);
+        if (passwordInput != null) {
+            passwordInput.setText("");
+        }
+        
+        // Get the current user
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            // Update email directly from Firebase Auth
+            emailText.setText(currentUser.getEmail());
+            
+            // Reload user profile from Firestore
+            db.collection("users").document(currentUser.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String firstName = documentSnapshot.getString("firstName");
+                        String lastName = documentSnapshot.getString("lastName");
+                        nameText.setText(firstName + " " + lastName);
+                        
+                        // Show success message
+                        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        nameText.setText("User");
+                        Toast.makeText(this, "Profile updated, but user data not found", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("ProfileActivity", "Error loading user profile", e);
+                    Toast.makeText(this, "Error loading profile data", Toast.LENGTH_SHORT).show();
+                });
+        }
+        
+        // Show a brief animation to indicate refresh
+        View rootView = findViewById(android.R.id.content);
+        rootView.animate()
+            .alpha(0.8f)
+            .setDuration(100)
+            .withEndAction(() -> {
+                rootView.animate()
+                    .alpha(1.0f)
+                    .setDuration(100)
+                    .start();
+            })
+            .start();
     }
 
     @Override

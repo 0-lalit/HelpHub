@@ -19,7 +19,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
     private RecyclerView appointmentsList;
     private FloatingActionButton addAppointmentFab;
-    private AppointmentAdapter adapter;
+    private AppointmentManager appointmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         initializeViews();
         setupToolbar();
-        setupRecyclerView();
+        setupAppointmentManager();
         setupListeners();
     }
 
@@ -44,37 +44,14 @@ public class AppointmentsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupRecyclerView() {
-        appointmentsList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AppointmentAdapter(getSampleAppointments());
-        appointmentsList.setAdapter(adapter);
+    private void setupAppointmentManager() {
+        appointmentManager = new AppointmentManager(this, appointmentsList);
     }
 
     private void setupListeners() {
         addAppointmentFab.setOnClickListener(v -> {
-            // TODO: Implement add appointment functionality
-            Toast.makeText(this, "Add appointment clicked", Toast.LENGTH_SHORT).show();
+            appointmentManager.showAddAppointmentDialog();
         });
-    }
-
-    private List<AppointmentItem> getSampleAppointments() {
-        // TODO: Replace with real data from database
-        List<AppointmentItem> appointments = new ArrayList<>();
-        appointments.add(new AppointmentItem(
-            "Lalit Kumar",
-            "CS 101 - Introduction to Programming",
-            "2024-03-20",
-            "14:30",
-            "Basic Programming Concepts"
-        ));
-        appointments.add(new AppointmentItem(
-            "Hawaii Smith",
-            "CS 303 - Algorithms",
-            "2024-03-21",
-            "15:00",
-            "Graph Algorithms"
-        ));
-        return appointments;
     }
 
     @Override
@@ -85,4 +62,4 @@ public class AppointmentsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-} 
+}
