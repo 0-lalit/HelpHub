@@ -22,6 +22,8 @@ import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
+    private TextInputEditText firstNameInput;
+    private TextInputEditText lastNameInput;
     private TextInputEditText emailInput;
     private TextInputEditText passwordInput;
     private TextInputEditText confirmPasswordInput;
@@ -46,6 +48,8 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        firstNameInput = findViewById(R.id.firstNameInput);
+        lastNameInput = findViewById(R.id.lastNameInput);
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
@@ -75,12 +79,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void performSignUp() {
         Log.d(TAG, "Starting signup process. isGaTaSignUp: " + isGaTaSignUp);
+        String firstName = firstNameInput.getText().toString().trim();
+        String lastName = lastNameInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
 
         // Validate inputs
-        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -128,6 +134,8 @@ public class SignUpActivity extends AppCompatActivity {
                             
                             // Then update Firestore in the background
                             Map<String, Object> userData = new HashMap<>();
+                            userData.put("firstName", firstName);
+                            userData.put("lastName", lastName);
                             userData.put("email", email);
                             userData.put("isAdmin", isGaTaSignUp);
                             userData.put("createdAt", new Date());
