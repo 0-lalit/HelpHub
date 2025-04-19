@@ -51,7 +51,7 @@ public class GaTaActivity extends AppCompatActivity {
     private void setupListeners() {
         viewAppointmentsButton.setOnClickListener(v -> {
             Log.d(TAG, "View Appointments button clicked");
-            Intent intent = new Intent(this, AppointmentsActivity.class);
+            Intent intent = new Intent(this, AdminAppointmentsActivity.class);
             startActivity(intent);
         });
 

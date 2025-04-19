@@ -24,7 +24,7 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            setContentView(R.layout.activity_appointments);
+            setContentView(R.layout.activity_admin_appointments);
 
             // Initialize Firebase Auth
             mAuth = FirebaseAuth.getInstance();
