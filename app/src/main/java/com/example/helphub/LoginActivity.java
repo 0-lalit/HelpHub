@@ -47,8 +47,32 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             Log.d(TAG, "User already signed in: " + currentUser.getEmail());
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+            // Check if user is admin
+            db.collection("users").document(currentUser.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        boolean isAdmin = documentSnapshot.getBoolean("isAdmin");
+                        Intent intent;
+                        if (isAdmin) {
+                            intent = new Intent(this, GaTaActivity.class);
+                        } else {
+                            intent = new Intent(this, MainActivity.class);
+                        }
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // User document doesn't exist, sign them out
+                        mAuth.signOut();
+                        Toast.makeText(this, "User profile not found", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error checking user type", e);
+                    mAuth.signOut();
+                    Toast.makeText(this, "Error checking user type", Toast.LENGTH_LONG).show();
+                });
         }
     }
 
