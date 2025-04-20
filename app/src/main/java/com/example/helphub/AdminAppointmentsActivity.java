@@ -31,10 +31,14 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
     private RecyclerView gaTaList;
     private TextInputEditText searchInput;
     private FloatingActionButton addGaTaFab;
+    private FloatingActionButton editGaTaFab;
+    private FloatingActionButton deleteGaTaFab;
+    private FloatingActionButton refreshFab;
     private GaTaAdapter adapter;
     private List<GaTa> gaTaItems;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private GaTa selectedGaTa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +48,10 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
 
             // Initialize Firebase Auth
             mAuth = FirebaseAuth.getInstance();
-            
+
             // Initialize Firestore
             db = FirebaseFirestore.getInstance();
-            
+
             initializeViews();
             setupToolbar();
             setupAdminAppointmentManager();
@@ -67,6 +71,9 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
             gaTaList = findViewById(R.id.gaTaList);
             searchInput = findViewById(R.id.searchInput);
             addGaTaFab = findViewById(R.id.addGaTaFab);
+            editGaTaFab = findViewById(R.id.editGaTaFab);
+            deleteGaTaFab = findViewById(R.id.deleteGaTaFab);
+            refreshFab = findViewById(R.id.refreshFab);
         } catch (Exception e) {
             Log.e(TAG, "Error initializing views", e);
             Toast.makeText(this, "Error finding views", Toast.LENGTH_SHORT).show();
@@ -98,6 +105,13 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
     private void setupListeners() {
         try {
             addGaTaFab.setOnClickListener(v -> showAddGaTaDialog());
+            editGaTaFab.setOnClickListener(v -> showEditGaTaDialog());
+            deleteGaTaFab.setOnClickListener(v -> showDeleteConfirmationDialog());
+            refreshFab.setOnClickListener(v -> {
+                refreshFab.setEnabled(false);
+                loadGaTaData();
+                refreshFab.setEnabled(true);
+            });
         } catch (Exception e) {
             Log.e(TAG, "Error setting up listeners", e);
             Toast.makeText(this, "Error setting up buttons", Toast.LENGTH_SHORT).show();
@@ -106,7 +120,7 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
 
     private void showAddGaTaDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_gata, null);
-        
+
         TextInputEditText nameInput = dialogView.findViewById(R.id.nameInput);
         TextInputEditText emailInput = dialogView.findViewById(R.id.emailInput);
         TextInputEditText roleInput = dialogView.findViewById(R.id.roleInput);
@@ -127,8 +141,8 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
                     String officeHours = officeHoursInput.getText().toString().trim();
                     String officeLocation = officeLocationInput.getText().toString().trim();
 
-                    if (name.isEmpty() || email.isEmpty() || role.isEmpty() || 
-                        department.isEmpty() || course.isEmpty() || 
+                    if (name.isEmpty() || email.isEmpty() || role.isEmpty() ||
+                        department.isEmpty() || course.isEmpty() ||
                         officeHours.isEmpty() || officeLocation.isEmpty()) {
                         Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                         return;
@@ -137,6 +151,78 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
                     GaTa newGaTa = new GaTa(name, email, role, department, course, officeHours, officeLocation);
                     addGaTaToFirestore(newGaTa);
                 })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showEditGaTaDialog() {
+        if (selectedGaTa == null) {
+            Toast.makeText(this, "Please select a GA/TA to edit", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_gata, null);
+
+        TextInputEditText nameInput = dialogView.findViewById(R.id.nameInput);
+        TextInputEditText emailInput = dialogView.findViewById(R.id.emailInput);
+        TextInputEditText roleInput = dialogView.findViewById(R.id.roleInput);
+        TextInputEditText departmentInput = dialogView.findViewById(R.id.departmentInput);
+        TextInputEditText courseInput = dialogView.findViewById(R.id.courseInput);
+        TextInputEditText officeHoursInput = dialogView.findViewById(R.id.officeHoursInput);
+        TextInputEditText officeLocationInput = dialogView.findViewById(R.id.officeLocationInput);
+
+        // Pre-fill the fields with existing data
+        nameInput.setText(selectedGaTa.getName());
+        emailInput.setText(selectedGaTa.getEmail());
+        roleInput.setText(selectedGaTa.getRole());
+        departmentInput.setText(selectedGaTa.getDepartment());
+        courseInput.setText(selectedGaTa.getCourse());
+        officeHoursInput.setText(selectedGaTa.getOfficeHours());
+        officeLocationInput.setText(selectedGaTa.getOfficeLocation());
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Edit GA/TA")
+                .setView(dialogView)
+                .setPositiveButton("Save", (dialog, which) -> {
+                    String name = nameInput.getText().toString().trim();
+                    String email = emailInput.getText().toString().trim();
+                    String role = roleInput.getText().toString().trim();
+                    String department = departmentInput.getText().toString().trim();
+                    String course = courseInput.getText().toString().trim();
+                    String officeHours = officeHoursInput.getText().toString().trim();
+                    String officeLocation = officeLocationInput.getText().toString().trim();
+
+                    if (name.isEmpty() || email.isEmpty() || role.isEmpty() ||
+                        department.isEmpty() || course.isEmpty() ||
+                        officeHours.isEmpty() || officeLocation.isEmpty()) {
+                        Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    selectedGaTa.setName(name);
+                    selectedGaTa.setEmail(email);
+                    selectedGaTa.setRole(role);
+                    selectedGaTa.setDepartment(department);
+                    selectedGaTa.setCourse(course);
+                    selectedGaTa.setOfficeHours(officeHours);
+                    selectedGaTa.setOfficeLocation(officeLocation);
+
+                    updateGaTaInFirestore(selectedGaTa);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showDeleteConfirmationDialog() {
+        if (selectedGaTa == null) {
+            Toast.makeText(this, "Please select a GA/TA to delete", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Delete GA/TA")
+                .setMessage("Are you sure you want to delete " + selectedGaTa.getName() + "?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteGaTaFromFirestore(selectedGaTa))
                 .setNegativeButton("Cancel", null)
                 .show();
     }
@@ -151,7 +237,38 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
                     Toast.makeText(this, "GA/TA added successfully", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error adding GA/TA: " + e.getMessage(), 
+                    Toast.makeText(this, "Error adding GA/TA: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateGaTaInFirestore(GaTa gaTa) {
+        db.collection("ga_ta")
+                .document(gaTa.getId())
+                .set(gaTa)
+                .addOnSuccessListener(aVoid -> {
+                    adapter.updateList(gaTaItems);
+                    Toast.makeText(this, "GA/TA updated successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error updating GA/TA: " + e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void deleteGaTaFromFirestore(GaTa gaTa) {
+        db.collection("ga_ta")
+                .document(gaTa.getId())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    gaTaItems.remove(gaTa);
+                    adapter.updateList(gaTaItems);
+                    selectedGaTa = null;
+                    updateFabVisibility();
+                    Toast.makeText(this, "GA/TA deleted successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error deleting GA/TA: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
                 });
     }
@@ -161,8 +278,8 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
             gaTaItems = new ArrayList<>();
             adapter = new GaTaAdapter(gaTaItems, true); // true for admin view
             adapter.setOnItemClickListener(gaTa -> {
-                // Handle GA/TA item click
-                // TODO: Implement item click handling
+                selectedGaTa = gaTa;
+                updateFabVisibility();
             });
             gaTaList.setLayoutManager(new LinearLayoutManager(this));
             gaTaList.setAdapter(adapter);
@@ -188,30 +305,51 @@ public class AdminAppointmentsActivity extends AppCompatActivity {
         }
     }
 
-    private void setupSearch() {
-        try {
-            searchInput.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {}
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "Error setting up search", e);
-            Toast.makeText(this, "Error setting up search", Toast.LENGTH_SHORT).show();
+    private void updateFabVisibility() {
+        if (selectedGaTa != null) {
+            addGaTaFab.setVisibility(View.GONE);
+            editGaTaFab.setVisibility(View.VISIBLE);
+            deleteGaTaFab.setVisibility(View.VISIBLE);
+        } else {
+            addGaTaFab.setVisibility(View.VISIBLE);
+            editGaTaFab.setVisibility(View.GONE);
+            deleteGaTaFab.setVisibility(View.GONE);
         }
+    }
+
+    private void setupSearch() {
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = s.toString().toLowerCase().trim();
+                List<GaTa> filteredList = new ArrayList<>();
+                
+                for (GaTa gaTa : gaTaItems) {
+                    if (gaTa.getName().toLowerCase().contains(query) ||
+                        gaTa.getCourse().toLowerCase().contains(query) ||
+                        gaTa.getDepartment().toLowerCase().contains(query)) {
+                        filteredList.add(gaTa);
+                    }
+                }
+                
+                adapter.updateList(filteredList);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
+            return true;
+        } else if (item.getItemId() == R.id.action_refresh) {
+            loadGaTaData();
             return true;
         }
         return super.onOptionsItemSelected(item);
