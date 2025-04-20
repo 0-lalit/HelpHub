@@ -17,22 +17,41 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/appointmentsList"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/searchLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:hint="Search GAs/TAs"
+            app:startIconDrawable="@android:drawable/ic_menu_search"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    </androidx.core.widget.NestedScrollView>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gaTaList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toBottomOf="@id/searchLayout"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addAppointmentFab"
+        android:id="@+id/addGaTaFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

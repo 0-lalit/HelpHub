@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profileImage"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@android:drawable/ic_menu_myplaces"
+            app:shapeAppearanceOverlay="@style/CircularImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/profileImage"
+            app:layout_constraintEnd_toStartOf="@id/availabilityIndicator"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/course"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/profileImage"
+            app:layout_constraintEnd_toStartOf="@id/availabilityIndicator"
+            app:layout_constraintTop_toBottomOf="@id/name"/>
+
+        <View
+            android:id="@+id/availabilityIndicator"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/availability_indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:layout_marginTop="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:layout_constraintTop_toBottomOf="@id/course"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/toggleAvailabilityButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toggle Availability"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:layout_constraintTop_toBottomOf="@id/course"
+            app:layout_constraintEnd_toStartOf="@id/deleteButton"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView> 
