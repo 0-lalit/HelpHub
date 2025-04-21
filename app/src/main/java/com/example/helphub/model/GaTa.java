@@ -9,6 +9,7 @@ public class GaTa {
     private String course;
     private String officeHours;
     private String officeLocation;
+    private boolean available;
 
     // Default constructor required for Firestore
     public GaTa() {}
@@ -22,6 +23,7 @@ public class GaTa {
         this.course = course;
         this.officeHours = officeHours;
         this.officeLocation = officeLocation;
+        this.available = true;
     }
 
     // Getters and Setters
@@ -87,5 +89,13 @@ public class GaTa {
 
     public void setOfficeLocation(String officeLocation) {
         this.officeLocation = officeLocation;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 } 
