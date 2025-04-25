@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        
+
         // Initialize views and data
         initializeViews();
         setupListeners();
@@ -72,6 +72,16 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         }
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onEditClick(GaTaItem item) {
+        // Not available for regular users — no action needed
+    }
+
+    @Override
+    public void onDeleteClick(GaTaItem item) {
+        // Not available for regular users — no action needed
+    }
+
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("message");
@@ -218,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
 
     private void setupRecyclerView() {
         gaTaList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new GaTaAdapter(filteredGaTaItems, this);
+        adapter = new GaTaAdapter(filteredGaTaItems, this, false); // false = not admin
         gaTaList.setAdapter(adapter);
     }
 
